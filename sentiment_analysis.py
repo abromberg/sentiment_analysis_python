@@ -1,14 +1,20 @@
-import re, math, collections, itertools
+import re, math, collections, itertools, os
 import nltk, nltk.classify.util, nltk.metrics
 from nltk.classify import NaiveBayesClassifier
 from nltk.metrics import BigramAssocMeasures
 from nltk.probability import FreqDist, ConditionalFreqDist
 
+
+POLARITY_DATA_DIR = os.path.join('polarityData', 'rt-polaritydata')
+RT_POLARITY_POS_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-pos.txt')
+RT_POLARITY_NEG_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-neg.txt')
+
+
 #this function takes a feature selection mechanism and returns its performance in a variety of metrics
 def evaluate_features(feature_select):
 	#reading pre-labeled input and splitting into lines
-	posSentences = open('polarityData\\rt-polaritydata\\rt-polarity-pos.txt', 'r')
-	negSentences = open('polarityData\\rt-polaritydata\\rt-polarity-neg.txt', 'r')
+	posSentences = open(RT_POLARITY_POS_FILE, 'r')
+	negSentences = open(RT_POLARITY_NEG_FILE, 'r')
 	posSentences = re.split(r'\n', posSentences.read())
 	negSentences = re.split(r'\n', negSentences.read())
 
@@ -65,8 +71,8 @@ evaluate_features(make_full_dict)
 #scores words based on chi-squared test to show information gain (http://streamhacker.com/2010/06/16/text-classification-sentiment-analysis-eliminate-low-information-features/)
 def create_word_scores():
 	#splits sentences into lines
-	posSentences = open('polarityData\\rt-polaritydata\\rt-polarity-pos.txt', 'r')
-	negSentences = open('polarityData\\rt-polaritydata\\rt-polarity-neg.txt', 'r')
+	posSentences = open(RT_POLARITY_POS_FILE, 'r')
+	negSentences = open(RT_POLARITY_NEG_FILE, 'r')
 	posSentences = re.split(r'\n', posSentences.read())
 	negSentences = re.split(r'\n', negSentences.read())
 
