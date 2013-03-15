@@ -12,24 +12,20 @@ RT_POLARITY_NEG_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-neg.txt')
 
 #this function takes a feature selection mechanism and returns its performance in a variety of metrics
 def evaluate_features(feature_select):
-	#reading pre-labeled input and splitting into lines
-	posSentences = open(RT_POLARITY_POS_FILE, 'r')
-	negSentences = open(RT_POLARITY_NEG_FILE, 'r')
-	posSentences = re.split(r'\n', posSentences.read())
-	negSentences = re.split(r'\n', negSentences.read())
-
 	posFeatures = []
 	negFeatures = []
 	#http://stackoverflow.com/questions/367155/splitting-a-string-into-words-and-punctuation
 	#breaks up the sentences into lists of individual words (as selected by the input mechanism) and appends 'pos' or 'neg' after each list
-	for i in posSentences:
-		posWords = re.findall(r"[\w']+|[.,!?;]", i)
-		posWords = [feature_select(posWords), 'pos']
-		posFeatures.append(posWords)
-	for i in negSentences:
-		negWords = re.findall(r"[\w']+|[.,!?;]", i)
-		negWords = [feature_select(negWords), 'neg']
-		negFeatures.append(negWords)
+	with open(RT_POLARITY_POS_FILE, 'r') as posSentences:
+		for i in posSentences:
+			posWords = re.findall(r"[\w']+|[.,!?;]", i.rstrip())
+			posWords = [feature_select(posWords), 'pos']
+			posFeatures.append(posWords)
+	with open(RT_POLARITY_NEG_FILE, 'r') as negSentences:
+		for i in negSentences:
+			negWords = re.findall(r"[\w']+|[.,!?;]", i.rstrip())
+			negWords = [feature_select(negWords), 'neg']
+			negFeatures.append(negWords)
 
 	
 	#selects 3/4 of the features to be used for training and 1/4 to be used for testing
@@ -70,21 +66,17 @@ evaluate_features(make_full_dict)
 
 #scores words based on chi-squared test to show information gain (http://streamhacker.com/2010/06/16/text-classification-sentiment-analysis-eliminate-low-information-features/)
 def create_word_scores():
-	#splits sentences into lines
-	posSentences = open(RT_POLARITY_POS_FILE, 'r')
-	negSentences = open(RT_POLARITY_NEG_FILE, 'r')
-	posSentences = re.split(r'\n', posSentences.read())
-	negSentences = re.split(r'\n', negSentences.read())
-
 	#creates lists of all positive and negative words
 	posWords = []
 	negWords = []
-	for i in posSentences:
-		posWord = re.findall(r"[\w']+|[.,!?;]", i)
-		posWords.append(posWord)
-	for i in negSentences:
-		negWord = re.findall(r"[\w']+|[.,!?;]", i)
-		negWords.append(negWord)
+	with open(RT_POLARITY_POS_FILE, 'r') as posSentences:
+		for i in posSentences:
+			posWord = re.findall(r"[\w']+|[.,!?;]", i.rstrip())
+			posWords.append(posWord)
+	with open(RT_POLARITY_NEG_FILE, 'r') as negSentences:
+		for i in negSentences:
+			negWord = re.findall(r"[\w']+|[.,!?;]", i.rstrip())
+			negWords.append(negWord)
 	posWords = list(itertools.chain(*posWords))
 	negWords = list(itertools.chain(*negWords))
 
